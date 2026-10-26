@@ -1,0 +1,450 @@
+/* ===============================
+   Theme Variables
+=============================== */
+
+:root {
+  --link-color: #2196f3;
+  --link-hover-color: #1769aa;
+
+  /* Light theme */
+  --bg-color: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
+  --main-bg-color: #f4f7fb;
+  --card-color: #ffffff;
+  --text-color: #1a202c;
+  --muted-color: rgba(26, 32, 44, 0.7);
+  --border-color: rgba(0, 0, 0, 0.06);
+  --hero-background-color: linear-gradient(135deg, #2196f3 0%, #64b5f6 100%);
+
+  --side-nav-bg: #ffffff;
+  --side-nav-text: #1a202c;
+  --side-nav-hover-bg: #e3f2fd;
+  --side-nav-active-bg: #bbdefb;
+  --side-nav-active-text: #0d47a1;
+  --side-nav-box-shadow: rgba(0, 0, 0, 0.08);
+
+  --header-bg: #ffffff;
+  --header-text: #1a202c;
+  --dropdown-bg: #ffffff;
+  --dropdown-text: #2d3748;
+  --dropdown-hover-bg: #e3f2fd;
+  --dropdown-hover-text: #2196f3;
+  --dropdown-border: #e3f2fd;
+  --header-box-shadow: rgba(0, 0, 0, 0.08);
+  --dropdown-box-shadow: rgba(0, 0, 0, 0.15);
+
+  --footer-bg: #ffffff;
+  --footer-text: #2d3748;
+  --footer-box-shadow: rgba(0, 0, 0, 0.08);
+
+  /* ===============================
+     Unified Buttons (ALL THEMES)
+  =============================== */
+  --button-success-bg: linear-gradient(135deg, #2196f3 0%, #4dabf5 100%);
+  --button-text: #ffffff;
+  --button-error-bg: linear-gradient(135deg, #e91e63 0%, #ed4b82 100%);
+  --button-warning-bg: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+  --button-disable-bg: linear-gradient(135deg, #bdbdbd 0%, #e0e0e0 100%);
+}
+
+/* ===============================
+   Dark Theme
+=============================== */
+
+[data-theme="dark"] {
+  --bg-color: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+  --main-bg-color: #020617;
+  --card-color: #111827;
+  --text-color: #e5e7eb;
+  --muted-color: rgba(229, 231, 235, 0.7);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --hero-background-color: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+
+  --side-nav-bg: #111418;
+  --side-nav-text: #e5e7eb;
+  --side-nav-hover-bg: rgba(255, 255, 255, 0.08);
+  --side-nav-active-bg: #2d3748;
+  --side-nav-active-text: #4aedc4;
+
+  --header-bg: #111418;
+  --header-text: #ffffff;
+  --dropdown-bg: #1c1f26;
+  --dropdown-text: #f5f5f5;
+  --dropdown-hover-bg: #2d3748;
+  --dropdown-hover-text: #4aedc4;
+  --dropdown-border: #2f2f3a;
+  --header-box-shadow: rgba(0, 0, 0, 0.5);
+  --dropdown-box-shadow: rgba(0, 0, 0, 0.5);
+
+  --footer-bg: #111418;
+  --footer-text: #e5e7eb;
+  --footer-box-shadow: rgba(0, 0, 0, 0.5);
+
+  /* Buttons remain SAME in dark mode */
+  --button-success-bg: linear-gradient(135deg, #2196f3 0%, #4dabf5 100%);
+  --button-text: #ffffff;
+  --button-error-bg: linear-gradient(135deg, #e91e63 0%, #ed4b82 100%);
+  --button-warning-bg: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+  --button-disable-bg: linear-gradient(135deg, #bdbdbd 0%, #e0e0e0 100%);
+}
+
+/* ===============================
+   General Layout
+=============================== */
+
+.app {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+body.en {
+  font-family: "Inter", sans-serif;
+}
+
+body.si {
+  font-family: "Noto Sans Sinhala", "Iskoola Pota", sans-serif;
+}
+
+.mainBody {
+  background: var(--bg-color);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* min-height: 100vh; */
+  overflow: hidden;
+  color: var(--text-color);
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+.mainBody.signup-page {
+  min-height: 125vh;
+}
+
+.mainBody.signedIn {
+  /* padding: 50px; */
+  overflow-y: auto;
+  background: var(--bg-color);
+  height: auto;
+  display: block;
+}
+
+/* ===============================
+   Inputs
+=============================== */
+
+.helpertext {
+  display: flex;
+  margin-left: 5px;
+  color: var(--muted-color);
+}
+
+/* ===============================
+   FORM ROW SYSTEM
+=============================== */
+
+/* Desktop default: 2 columns */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.desktop-three {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* 2 column desktop rows (USED IN YOUR JSX) */
+.desktop-two {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* full width */
+.full {
+  grid-template-columns: 1fr !important;
+}
+
+/* ===============================
+   INPUT BOX WRAPPER
+=============================== */
+.input-container {
+  width: 100%;
+}
+
+/* ===============================
+   MUI TEXTFIELD FIXES
+=============================== */
+
+.custom-textfield .MuiOutlinedInput-root {
+  color: var(--text-color) !important;
+  border-radius: 6px;
+}
+
+.custom-textfield .MuiOutlinedInput-input {
+  color: var(--text-color) !important;
+  -webkit-text-fill-color: var(--text-color) !important;
+}
+
+/* placeholder */
+.custom-textfield .MuiInputBase-input::placeholder {
+  color: var(--muted-color) !important;
+  opacity: 1;
+}
+
+/* outline */
+.custom-textfield .MuiOutlinedInput-notchedOutline {
+  border-color: var(--border-color) !important;
+}
+
+.custom-textfield .MuiOutlinedInput-root.MuiInputBase-sizeSmall {
+  padding-left: 12px !important;
+}
+.custom-textfield
+  .MuiOutlinedInput-root:hover
+  .MuiOutlinedInput-notchedOutline {
+  border-color: var(--link-color) !important;
+}
+
+.custom-textfield
+  .MuiOutlinedInput-root.Mui-focused
+  .MuiOutlinedInput-notchedOutline {
+  border-color: var(--link-color) !important;
+}
+
+/* label */
+.custom-textfield .MuiInputLabel-root {
+  color: var(--muted-color) !important;
+}
+
+.custom-textfield .MuiInputLabel-root.Mui-focused {
+  color: var(--link-color) !important;
+}
+
+/* helper text */
+.custom-textfield .MuiFormHelperText-root {
+  color: var(--muted-color) !important;
+}
+
+.custom-textfield .Mui-error.MuiFormHelperText-root {
+  color: #ff6b6b !important;
+}
+
+/* icons */
+.custom-textfield .MuiSvgIcon-root {
+  color: var(--muted-color) !important;
+}
+
+/* ===============================
+   AUTOCOMPLETE DROPDOWN
+=============================== */
+
+.MuiAutocomplete-popper {
+  z-index: 9999 !important;
+}
+
+.MuiAutocomplete-listbox {
+  background: var(--dropdown-bg) !important;
+  color: var(--dropdown-text) !important;
+
+  border-radius: 10px;
+  padding: 5px;
+  box-shadow: 0 10px 20px var(--dropdown-box-shadow);
+}
+
+.MuiAutocomplete-option {
+  padding: 12px !important;
+  border-radius: 6px;
+}
+
+.MuiAutocomplete-option:hover,
+.MuiAutocomplete-option.Mui-focused {
+  background: var(--dropdown-hover-bg) !important;
+  color: var(--dropdown-hover-text) !important;
+}
+
+.MuiRating-iconEmpty {
+  color: var(--muted-color) !important;
+}
+
+.MuiRating-iconFilled {
+  color: #ffd700 !important;
+}
+
+.MuiRating-iconHover {
+  color: #ffd700 !important;
+}
+
+.MuiPaper-root-MuiDialog-paper,
+.MuiDialogContent-root,
+.MuiDialogContentText-root,
+.MuiDialogTitle-root,
+.MuiDialogActions-root {
+  background: var(--card-color);
+  color: var(--muted-color) !important;
+}
+
+.MuiIconButton-root {
+  color: var(--muted-color) !important;
+}
+
+.MuiPaper-root-MuiDialog-paper {
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 15px var(--border-color);
+}
+
+.MuiDialogContent-root {
+  border-top: 1px solid var(--border-color) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* Target MUI input */
+.MuiInputBase-input:-webkit-autofill,
+.MuiInputBase-input:-webkit-autofill:hover,
+.MuiInputBase-input:-webkit-autofill:focus,
+.MuiInputBase-input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--text-color) !important;
+  caret-color: transparent !important;
+  border-radius: inherit;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.button-success {
+  background: var(--button-success-bg);
+}
+
+.button-error {
+  background: var(--button-error-bg);
+}
+
+.button-warning {
+  background: var(--button-warning-bg);
+}
+
+.button-disable {
+  height: 42.2px !important;
+  background: var(--button-disable-bg);
+}
+
+.button-success,
+.button-error,
+.button-disable,
+.button-warning {
+  width: 100%;
+  padding: 12px;
+  color: var(--button-text);
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.button-success:hover,
+.button-error:hover,
+.button-warning {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  flex-direction: row;
+}
+
+.button-share {
+  width: 34px !important;
+  height: 34px !important;
+}
+
+/* ===============================
+   Card
+=============================== */
+
+.card {
+  background: var(--card-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px var(--border-color);
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+/* ===============================
+   Theme Toggle
+=============================== */
+
+.theme-toggle-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 25px;
+  box-shadow: 0 2px 10px var(--border-color);
+  border: 1px solid var(--border-color);
+  color: #ffffff;
+}
+
+.MuiAlert-action {
+  padding: 0 !important;
+  align-items: center !important;
+}
+
+.MuiAlert-action .MuiIconButton-root {
+  color: white !important;
+}
+
+.recharts-default-tooltip {
+  background: var(--card-color) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 4px 15px var(--border-color) !important;
+}
+
+/* ===============================
+   Responsive
+=============================== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .form-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* MOBILE (IMPORTANT PART FOR YOUR REQUIREMENT) */
+@media (max-width: 768px) {
+  /* FORCE SINGLE COLUMN ON MOBILE */
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+  }
+
+  .mainBody.signedIn {
+    padding: 10px;
+  }
+
+  .theme-toggle-container {
+    top: 20px;
+    right: 25%;
+    transform: translateX(50%);
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,37 @@
+/* loadingSpinner.css */
+
+.loading-modal-backdrop {
+  backdrop-filter: blur(6px);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.loading-spinner-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 180px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+
+  border-radius: 12px;
+
+  /* background: rgba(255, 255, 255, 0.8); */
+  background: var(--card-color);
+  backdrop-filter: blur(10px);
+
+  box-shadow: 0 4px 12px var(--border-color);
+
+  outline: none;
+}
+
+.loading-text {
+  font-size: 14px;
+  color: var(--text-color);
+  font-weight: 500;
+}

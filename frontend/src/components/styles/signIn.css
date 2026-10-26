@@ -1,0 +1,155 @@
+/* ===============================
+   SIGNIN CONTAINER (FIXED & RESPONSIVE)
+=============================== */
+
+.signin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: auto;
+  max-width: 850px;
+
+  margin: 30px auto;
+
+  background-color: var(--card-color);
+  color: var(--text-color);
+
+  border-radius: 15px;
+  box-shadow: 0 4px 12px var(--border-color);
+
+  padding: 20px;
+  box-sizing: border-box;
+
+  transition: all 0.3s ease;
+}
+
+/* ===============================
+   LOGO SECTION
+=============================== */
+
+.signin-logo {
+  flex: 1;
+  background: url("/public/assets/logo.png") no-repeat center;
+  background-size: contain;
+  height: 300px;
+}
+
+[data-theme="dark"] .signin-logo {
+  background-image: url("/public/assets/logoD.png");
+}
+
+/* ===============================
+   FORM BOX
+=============================== */
+
+.signin-box {
+  flex: 1;
+  max-width: 500px;
+
+  border-left: 1px solid var(--border-color);
+  padding: 40px;
+
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.signin-box h2 {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+/* ===============================
+   LABELS
+=============================== */
+
+.signin-box label {
+  display: block;
+  text-align: left;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+/* ===============================
+   LINKS
+=============================== */
+
+.forgot-password-link,
+.signup-link {
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--text-color);
+}
+
+.forgot-password-link a {
+  color: #ff6b6b !important;
+}
+
+.forgot-password-link a:hover {
+  color: #f14e4e !important;
+  text-decoration: underline;
+}
+
+.signup-link a {
+  color: var(--link-color);
+}
+
+.signup-link a:hover {
+  color: var(--link-hover-color);
+  text-decoration: underline;
+}
+
+/* ===============================
+   RESPONSIVE DESIGN
+=============================== */
+
+/* TABLET */
+@media screen and (max-width: 1024px) {
+  .signin-container {
+    flex-direction: column;
+    margin: 25px auto;
+    padding: 20px;
+    width: auto;
+    max-width: 500px;
+  }
+
+  .signin-logo {
+    width: 180px;
+    min-height: 160px;
+    margin: 0 auto;
+  }
+
+  .signin-box {
+    border-left: none;
+    padding: 20px;
+    width: 100%;
+  }
+
+  .signin-box h2 {
+    margin-top: 0;
+  }
+}
+
+/* MOBILE */
+@media screen and (max-width: 480px) {
+  .signin-container {
+    margin: 15px auto;
+    padding: 16px;
+    width: auto;
+  }
+
+  .signin-box {
+    padding: 15px;
+  }
+
+  .signin-box h2 {
+    font-size: 22px;
+  }
+
+  .signin-logo {
+    width: 140px;
+    min-height: 120px;
+  }
+}

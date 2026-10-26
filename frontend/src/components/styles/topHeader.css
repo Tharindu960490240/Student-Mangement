@@ -1,0 +1,336 @@
+/* ================= HEADER ================= */
+.header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  max-width: 100vw;
+  height: 65px;
+
+  background: var(--header-bg);
+  color: var(--header-text);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 24px;
+  border-bottom: 1px solid var(--border-color);
+  z-index: 1000;
+
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+/* ================= LEFT (LOGO) ================= */
+.header-left {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.logo-img {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* ================= CENTER NAV ================= */
+.header-center {
+  display: flex;
+  gap: 22px;
+  justify-content: center;
+  flex: 1;
+  align-items: center;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-color);
+  transition: 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-item:hover {
+  color: var(--dropdown-hover-text);
+}
+
+.nav-item svg {
+  font-size: 20px;
+}
+
+/* highlight button */
+.nav-item.highlight {
+  background: rgba(33, 150, 243, 0.12);
+  padding: 6px 12px;
+  border-radius: 20px;
+  color: var(--dropdown-hover-text);
+}
+
+/* ================= RIGHT ================= */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+/* buttons */
+.header-right button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: none;
+
+  cursor: pointer;
+  background: var(--card-color);
+  color: var(--text-color);
+
+  transition: 0.2s ease;
+}
+
+.header-right button:hover {
+  background: var(--side-nav-hover-bg);
+}
+
+.header-right .primary {
+  background: var(--link-color);
+  color: white;
+}
+
+/* ================= PROFILE ================= */
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  position: relative;
+}
+
+.header-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color);
+
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ================= NOTIFICATION ================= */
+.notification {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-right: 10px;
+  color: var(--text-color);
+}
+
+.notification svg {
+  font-size: 22px;
+}
+
+/* ================= DROPDOWN ================= */
+.dropdown-menu {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 210px;
+
+  background: var(--dropdown-bg);
+  color: var(--dropdown-text);
+
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--dropdown-box-shadow);
+
+  overflow: hidden;
+  animation: fadeIn 0.2s ease-in-out;
+  z-index: 2000;
+}
+
+.dropdown-item {
+  padding: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.dropdown-item:hover {
+  background: var(--dropdown-hover-bg);
+  color: var(--dropdown-hover-text);
+}
+
+/* ================= MOBILE MENU ICON ================= */
+.mobile-menu-icon {
+  display: none;
+  cursor: pointer;
+}
+
+/* ================= MOBILE DRAWER ================= */
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 280px;
+  height: 100vh;
+
+  background: var(--card-color);
+  box-shadow: -10px 0 25px rgba(0, 0, 0, 0.2);
+
+  z-index: 2000;
+  transition: 0.3s ease-in-out;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-drawer.open {
+  right: 0;
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 16px;
+  font-weight: bold;
+
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.drawer-header svg {
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+.drawer-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer-content div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 14px;
+  cursor: pointer;
+
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.drawer-content div:hover {
+  background: var(--side-nav-hover-bg);
+  color: var(--dropdown-hover-text) !important;
+}
+
+/* overlay */
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100vh;
+
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1500;
+}
+
+/* ================= THEME TOGGLE ================= */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--text-color) !important;
+  transition: 0.2s ease;
+  border-radius: 0px !important;
+  box-shadow: 0 !important;
+  border: 0px !important;
+}
+
+.theme-toggle svg {
+  font-size: 20px;
+  color: var(--text-color) !important;
+}
+
+/* Make switch aligned nicely */
+.theme-toggle .MuiSwitch-root {
+  margin: 0;
+}
+
+/* optional hover effect like nav items */
+.theme-toggle:hover {
+  color: var(--dropdown-hover-text) !important;
+}
+
+.badge-count {
+  background: #e91e63;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-left: auto;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 800px) {
+  .header-center {
+    display: none;
+  }
+
+  .header {
+    padding: 0 16px;
+  }
+
+  .mobile-menu-icon {
+    display: flex;
+    align-items: center;
+  }
+
+  .header-right button span {
+    display: none;
+  }
+
+  .header-name {
+    display: none;
+  }
+
+  .profile-section,
+  .hide-in-mobile {
+    display: none !important;
+  }
+
+  .header-right {
+    gap: 10px;
+  }
+}
+
+/* ================= ANIMATION ================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
