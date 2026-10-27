@@ -1,0 +1,19 @@
+.auth-logo {
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  margin: 0 auto 20px;
+}
+
+.auth-logo-dark {
+  display: none;
+}
+
+[data-theme="dark"] .auth-logo-light {
+  display: none;
+}
+
+[data-theme="dark"] .auth-logo-dark {
+  display: block;
+}

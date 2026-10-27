@@ -1,0 +1,123 @@
+/* customSnackbar.css - modern toast */
+
+.afc-toast {
+  --toast-accent: #282c7d;
+  --toast-tint: rgba(40, 44, 125, 0.1);
+
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  padding: 14px 12px 16px 14px;
+  overflow: hidden;
+
+  background: var(--card-color, #fff);
+  color: var(--text-color, #1a202c);
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
+  border-left: 4px solid var(--toast-accent);
+  border-radius: 12px;
+  box-shadow:
+    0 12px 32px rgba(15, 18, 56, 0.18),
+    0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.afc-toast-success {
+  --toast-accent: #16a34a;
+  --toast-tint: rgba(22, 163, 74, 0.12);
+}
+.afc-toast-error {
+  --toast-accent: #ed1f24;
+  --toast-tint: rgba(237, 31, 36, 0.12);
+}
+.afc-toast-warning {
+  --toast-accent: #d97706;
+  --toast-tint: rgba(217, 119, 6, 0.14);
+}
+.afc-toast-info {
+  --toast-accent: #282c7d;
+  --toast-tint: rgba(40, 44, 125, 0.12);
+}
+
+[data-theme="dark"] .afc-toast-info {
+  --toast-accent: #9aa0ff;
+  --toast-tint: rgba(154, 160, 255, 0.16);
+}
+
+.afc-toast-icon {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--toast-accent);
+  background: var(--toast-tint);
+}
+
+.afc-toast-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 1px;
+}
+
+.afc-toast-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.afc-toast-message {
+  font-size: 13px;
+  line-height: 1.45;
+  opacity: 0.8;
+  overflow-wrap: anywhere;
+}
+
+.afc-toast .afc-toast-close {
+  flex: none;
+  color: var(--text-color, #1a202c);
+  opacity: 0.45;
+}
+.afc-toast .afc-toast-close:hover {
+  opacity: 1;
+}
+
+.afc-toast-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--toast-accent);
+  opacity: 0.55;
+  transform-origin: left;
+  animation-name: afc-toast-shrink;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+/* MUI pauses the hide timer while hovered; pause the bar as well */
+.afc-toast:hover .afc-toast-progress {
+  animation-play-state: paused;
+}
+
+@keyframes afc-toast-shrink {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .afc-toast-progress {
+    animation: none;
+    display: none;
+  }
+}

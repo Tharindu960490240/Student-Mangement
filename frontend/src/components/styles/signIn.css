@@ -1,42 +1,59 @@
 /* ===============================
-   SIGNIN CONTAINER (FIXED & RESPONSIVE)
+   SIGN IN: card with brand panel + form
 =============================== */
 
 .signin-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  align-items: stretch;
 
   width: auto;
-  max-width: 850px;
-
-  margin: 30px auto;
+  max-width: 900px;
+  margin: 40px auto;
 
   background-color: var(--card-color);
   color: var(--text-color);
 
-  border-radius: 15px;
-  box-shadow: 0 4px 12px var(--border-color);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px var(--border-color);
+  border: 1px solid var(--border-color);
 
-  padding: 20px;
+  overflow: hidden;
   box-sizing: border-box;
-
   transition: all 0.3s ease;
 }
 
 /* ===============================
-   LOGO SECTION
+   BRAND PANEL (navy in both themes)
 =============================== */
 
-.signin-logo {
+.signin-brand {
   flex: 1;
-  background: url("/public/assets/logo.png") no-repeat center;
-  background-size: contain;
-  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+
+  padding: 48px 32px;
+  box-sizing: border-box;
+
+  background: linear-gradient(160deg, #282c7d 0%, #1a1d5c 100%);
+  color: #ffffff;
+  text-align: center;
 }
 
-[data-theme="dark"] .signin-logo {
-  background-image: url("/public/assets/logoD.png");
+.signin-brand-logo {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  display: block;
+}
+
+.signin-brand-tagline {
+  margin: 0;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 /* ===============================
@@ -46,30 +63,23 @@
 .signin-box {
   flex: 1;
   max-width: 500px;
-
-  border-left: 1px solid var(--border-color);
-  padding: 40px;
+  padding: 48px 40px;
 
   text-align: center;
   box-sizing: border-box;
 }
 
 .signin-box h2 {
+  margin: 0;
   font-size: 28px;
   font-weight: bold;
   color: var(--text-color);
 }
 
-/* ===============================
-   LABELS
-=============================== */
-
-.signin-box label {
-  display: block;
-  text-align: left;
-  margin-bottom: 5px;
-  font-weight: 500;
-  color: var(--text-color);
+.signin-subtitle {
+  margin: 6px 0 18px;
+  font-size: 14px;
+  color: var(--muted-color);
 }
 
 /* ===============================
@@ -84,11 +94,14 @@
 }
 
 .forgot-password-link a {
+  color: #ed1f24 !important;
+}
+
+[data-theme="dark"] .forgot-password-link a {
   color: #ff6b6b !important;
 }
 
 .forgot-password-link a:hover {
-  color: #f14e4e !important;
   text-decoration: underline;
 }
 
@@ -101,34 +114,39 @@
   text-decoration: underline;
 }
 
+/* keyboard focus */
+.signin-box a:focus-visible,
+.signin-box button:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 2px;
+}
+
 /* ===============================
-   RESPONSIVE DESIGN
+   RESPONSIVE
 =============================== */
 
-/* TABLET */
+/* TABLET: brand panel becomes a header strip */
 @media screen and (max-width: 1024px) {
   .signin-container {
     flex-direction: column;
     margin: 25px auto;
-    padding: 20px;
-    width: auto;
     max-width: 500px;
   }
 
-  .signin-logo {
-    width: 180px;
-    min-height: 160px;
-    margin: 0 auto;
+  .signin-brand {
+    flex: none;
+    gap: 14px;
+    padding: 28px 20px;
+  }
+
+  .signin-brand-logo {
+    max-width: 220px;
   }
 
   .signin-box {
-    border-left: none;
-    padding: 20px;
+    max-width: none;
     width: 100%;
-  }
-
-  .signin-box h2 {
-    margin-top: 0;
+    padding: 28px 24px 32px;
   }
 }
 
@@ -136,20 +154,17 @@
 @media screen and (max-width: 480px) {
   .signin-container {
     margin: 15px auto;
-    padding: 16px;
-    width: auto;
+  }
+
+  .signin-brand-logo {
+    max-width: 170px;
   }
 
   .signin-box {
-    padding: 15px;
+    padding: 24px 18px 28px;
   }
 
   .signin-box h2 {
     font-size: 22px;
-  }
-
-  .signin-logo {
-    width: 140px;
-    min-height: 120px;
   }
 }

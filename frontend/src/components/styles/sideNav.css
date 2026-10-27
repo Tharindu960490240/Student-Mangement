@@ -1,0 +1,266 @@
+/* ===============================
+   SIDE NAVIGATION + APP SHELL
+=============================== */
+
+.app-shell {
+  display: flex;
+  align-items: flex-start;
+  min-height: calc(100vh - 65px);
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* the old wrapper hides overflow, which stops the menu from sticking */
+.mainBody.signedIn:has(.app-shell) {
+  overflow: visible;
+}
+
+.sidenav {
+  position: sticky;
+  top: 65px;
+  flex: 0 0 248px;
+  width: 248px;
+  height: calc(100vh - 65px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  background: var(--side-nav-bg);
+  color: var(--side-nav-text);
+  border-right: 1px solid var(--border-color);
+  box-shadow: 2px 0 12px var(--side-nav-box-shadow);
+  transition:
+    width 0.2s ease,
+    flex-basis 0.2s ease;
+  overflow: hidden;
+}
+
+.sidenav.is-collapsed {
+  flex-basis: 72px;
+  width: 72px;
+}
+
+.sidenav-mobile-head {
+  display: none;
+}
+
+.sidenav-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidenav-group {
+  margin: 14px 12px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: var(--muted-color);
+  white-space: nowrap;
+}
+.sidenav-list > .sidenav-group:first-child {
+  margin-top: 4px;
+}
+
+.sidenav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--side-nav-text);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.sidenav-item svg {
+  flex: none;
+  font-size: 22px;
+}
+
+.sidenav-item:hover {
+  background: var(--side-nav-hover-bg);
+}
+
+.sidenav-item.is-active {
+  background: var(--side-nav-active-bg);
+  color: var(--side-nav-active-text);
+}
+.sidenav-item.is-active::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--brand-red);
+}
+
+.sidenav-item.is-disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.sidenav-item.is-disabled:hover {
+  background: transparent;
+}
+
+.sidenav-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidenav-soon {
+  flex: none;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--side-nav-hover-bg);
+  color: var(--muted-color);
+}
+
+.sidenav-footer {
+  padding: 8px 12px 14px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidenav-signout {
+  display: none; /* sign out lives in the profile menu on desktop */
+}
+
+.sidenav-signout:hover {
+  color: var(--brand-red);
+}
+
+/* collapsed: icons only */
+.sidenav.is-collapsed .sidenav-label,
+.sidenav.is-collapsed .sidenav-soon,
+.sidenav.is-collapsed .sidenav-group {
+  display: none;
+}
+.sidenav.is-collapsed .sidenav-item {
+  justify-content: center;
+  padding: 10px 0;
+}
+.sidenav.is-collapsed .sidenav-list {
+  padding-top: 18px;
+}
+.sidenav.is-collapsed .sidenav-item.is-active::before {
+  left: -12px;
+}
+
+.sidenav-item:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: -2px;
+}
+
+/* ===============================
+   PHONES: the menu becomes a drawer
+=============================== */
+.sidenav-overlay {
+  display: none;
+}
+
+@media (max-width: 800px) {
+  .app-shell {
+    display: block;
+  }
+
+  .sidenav,
+  .sidenav.is-collapsed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2100;
+    width: 280px;
+    flex-basis: auto;
+    height: 100vh;
+    transform: translateX(-102%);
+    transition: transform 0.25s ease;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.25);
+  }
+  .sidenav.is-open {
+    transform: translateX(0);
+  }
+
+  /* always show full labels in the drawer */
+  .sidenav.is-collapsed .sidenav-label,
+  .sidenav.is-collapsed .sidenav-soon,
+  .sidenav.is-collapsed .sidenav-group {
+    display: revert;
+  }
+  .sidenav.is-collapsed .sidenav-item {
+    justify-content: flex-start;
+    padding: 10px 12px;
+  }
+
+  .sidenav-mobile-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .sidenav-mobile-head strong {
+    display: block;
+    font-size: 15px;
+  }
+  .sidenav-mobile-head span {
+    font-size: 12px;
+    color: var(--muted-color);
+  }
+  .sidenav-close {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-color);
+    cursor: pointer;
+  }
+  .sidenav-close:hover {
+    background: var(--side-nav-hover-bg);
+  }
+
+  .sidenav-signout {
+    display: flex;
+  }
+  .sidenav-collapse {
+    display: none;
+  }
+
+  .sidenav-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 2050;
+    background: rgba(0, 0, 0, 0.45);
+  }
+}

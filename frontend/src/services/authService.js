@@ -1,399 +1,57 @@
+// ===============================
+// Auth API (talks to the AFC backend)
+//
+// Replace your old authService.js with this file. Same function names the
+// screens already import, new endpoints.
+//
+// The API address and endpoints live in src/const/const.js.
+// ===============================
 import { API_ENDPOINTS } from "../const/const";
-const { jwtDecode } = require("jwt-decode");
 
-/* ===========================
-    REGISTER USER
-=========================== */
-export const registerUser = async (userData) => {
+const request = async (url, { method = "GET", body, token } = {}) => {
   try {
-    const res = await fetch(API_ENDPOINTS.AUTH.REGISTER, {
-      method: "POST",
+    const res = await fetch(url, {
+      method,
       headers: {
         "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      body: JSON.stringify(userData),
+      body: body ? JSON.stringify(body) : undefined,
     });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Registration failed");
-    }
-
-    return {
-      success: true,
-      data,
-    };
+    const json = await res.json().catch(() => ({}));
+    return { ...json, success: res.ok && json.success !== false, status: res.status };
   } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-    };
+    return { success: false, message: "Could not reach the server." };
   }
 };
 
-/* ===========================
-    LOGIN USER
-=========================== */
-export const loginUser = async (credentials) => {
-  try {
-    const res = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
+// The token is kept in localStorage under "Token" (App.js manages it).
+export const get_token = async () => localStorage.getItem("Token");
 
-    const data = await res.json();
+// -> { success, data: { token, user } }
+export const loginUser = ({ email, password }) =>
+  request(API_ENDPOINTS.AUTH.LOGIN, { method: "POST", body: { email, password } });
 
-    if (!res.ok) {
-      throw new Error(data.error || "Login failed");
-    }
+// -> { success, user: { first_name, last_name, role, profile_image, ... } }
+export const getProfile = (token) => request(API_ENDPOINTS.AUTH.ME, { token });
 
-    return {
-      success: true,
-      data,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-    };
-  }
-};
+// Always answers "success" (the server never says whether the email exists).
+export const sendPasswordResetLink = (email) =>
+  request(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, { method: "POST", body: { email } });
 
-/* ===========================
-    VERIFY EMAIL
-=========================== */
-export const verifyEmail = async (token) => {
-  try {
-    const res = await fetch(`${API_ENDPOINTS.AUTH.VERIFY}/${token}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+// Checks the link from the email -> { success, data: { email } }
+export const validateResetToken = (token) =>
+  request(API_ENDPOINTS.AUTH.VALIDATE_RESET_TOKEN, { method: "POST", body: { token } });
 
-    const data = await res.json();
+export const resetPassword = (token, password) =>
+  request(API_ENDPOINTS.AUTH.RESET_PASSWORD, { method: "POST", body: { token, password } });
 
-    if (!res.ok) {
-      throw new Error(data.message || "Verification failed");
-    }
+export const changePassword = (token, currentPassword, newPassword) =>
+  request(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, { method: "PUT", token, body: { currentPassword, newPassword } });
 
-    return {
-      success: true,
-      data,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-    };
-  }
-};
-
-/* ===========================
-    GET PROFILE (ME)
-=========================== */
-export const getProfile = async (token) => {
-  try {
-    const res = await fetch(API_ENDPOINTS.AUTH.ME, {
-      method: "GET",
-      headers: {
-        
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Failed to fetch profile");
-    }
-
-    return { success: true, user: data };
-  } catch (error) {
-    return { success: false, message: error.message };
-  }
-};
-
-/* ===========================
-    UPDATE PROFILE
-=========================== */
-export const updateProfile = async (token, userData) => {
-  try {
-    const res = await fetch(API_ENDPOINTS.AUTH.UPDATE_PROFILE, {
-      method: "PUT",
-      headers: {
-        
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userData),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Profile update failed");
-    }
-
-    return { success: true, data };
-  } catch (error) {
-    return { success: false, message: error.message };
-  }
-};
-
-/* ===========================
-    UPDATE PROFILE IMAGE
-=========================== */
-export const updateProfileImage = async (token, imageFile) => {
-  try {
-    const formData = new FormData();
-    formData.append("image", imageFile);
-
-    const res = await fetch(API_ENDPOINTS.AUTH.ME_IMAGE, {
-      method: "PUT",
-      headers: {
-        
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Image upload failed");
-    }
-
-    return { success: true, data };
-  } catch (error) {
-    return { success: false, message: error.message };
-  }
-};
-
-/* ===========================
-    CHANGE PASSWORD
-=========================== */
-export const changePassword = async (token, passwordData) => {
-  try {
-    const res = await fetch(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, {
-      method: "PUT",
-      headers: {
-        
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(passwordData),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Password change failed");
-    }
-
-    return { success: true, data };
-  } catch (error) {
-    return { success: false, message: error.message };
-  }
-};
-
-/* ===========================
-    RESEND VERIFICATION
-=========================== */
-export const resendVerification = async (email) => {
-  try {
-    const res = await fetch(API_ENDPOINTS.AUTH.RESEND, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Resend failed");
-    }
-
-    return { success: true, data };
-  } catch (error) {
-    return { success: false, message: error.message };
-  }
-};
-
-/* ===========================
-    ADMIN - UPDATE USER STATUS
-=========================== */
-export const updateUserStatus = async (token, userId, email, status) => {
-  try {
-    const res = await fetch(API_ENDPOINTS.AUTH.UPDATE_STATUS(userId), {
-      method: "PATCH",
-      headers: {
-        
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, status }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Status update failed");
-    }
-
-    return { success: true, data };
-  } catch (error) {
-    return { success: false, message: error.message };
-  }
-};
-
-export async function get_token() {
-  try {
-    const userToken = await localStorage.getItem("Token");
-    return userToken;
-  } catch (error) {
-    console.error("Error fetching token:", error);
-    return null;
-  }
-}
-
-export const sendPasswordResetLink = async (email) => {
-  try {
-    const res = await fetch(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Failed to send reset link");
-    }
-
-    return {
-      success: true,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-    };
-  }
-};
-
-export const resetPassword = async (token, password) => {
-  try {
-    const res = await fetch(API_ENDPOINTS.AUTH.RESET_PASSWORD, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token,
-        password,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Password reset failed");
-    }
-
-    return {
-      success: true,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-    };
-  }
-};
-
-export const getAllUsers = async (token, params = {}) => {
-  try {
-    const query = new URLSearchParams();
-
-    if (params.page) query.append("page", params.page);
-    if (params.limit) query.append("limit", params.limit);
-    if (params.status) query.append("status", params.status);
-    if (params.search) query.append("search", params.search);
-    if (params.role) query.append("role", params.role);
-
-    const res = await fetch(`${API_ENDPOINTS.AUTH.BASE}?${query.toString()}`, {
-      method: "GET",
-      headers: {
-        
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Failed to fetch users");
-    }
-
-    return {
-      success: true,
-      data: data.data,
-      total: data.total,
-      page: data.page,
-      limit: data.limit,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-    };
-  }
-};
-
-export async function getMyData() {
-  try {
-    const userToken = await localStorage.getItem("Token");
-    if (userToken) {
-      const user = jwtDecode(userToken);
-      return user;
-    }
-    return null;
-  } catch (error) {
-    console.error("Error fetching email:", error);
-    return null;
-  }
-}
-
-export const deleteProfile = async (token) => {
-  try {
-    const res = await fetch(API_ENDPOINTS.AUTH.DELETE_PROFILE, {
-      method: "DELETE",
-      headers: {
-        
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Account deletion failed");
-    }
-
-    return { success: true, data };
-  } catch (error) {
-    return { success: false, message: error.message };
-  }
-};
+// Accounts are now verified by the invitation link itself, so the old
+// /verify/:token page is no longer part of the flow.
+export const verifyEmail = async () => ({
+  success: false,
+  message: "Email verification is no longer needed. Please sign in.",
+});

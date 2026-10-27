@@ -5,6 +5,7 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/frogotPassword.css";
+import AuthLogo from "../AuthLogo";
 import LoadingSpinner from "./LoadingSpinner";
 import CustomSnackbar from "./CustomSnackbar";
 
@@ -12,8 +13,11 @@ import { sendPasswordResetLink } from "../../services/authService";
 
 import { useTranslation } from "react-i18next";
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const ForgotPassword = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
@@ -28,11 +32,11 @@ const ForgotPassword = () => {
     severity: "success",
   });
 
-  const navigate = useNavigate();
+  const showMessage = (message, severity) =>
+    setSnackbar({ open: true, message, severity });
 
-  // Handle Email Input Change
   const handleEmailChange = (val) => {
-    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    const isValidEmail = EMAIL_REGEX.test(val);
     setData({
       ...data,
       email: val,
@@ -41,11 +45,12 @@ const ForgotPassword = () => {
     });
   };
 
-  // Handle Password Reset (Only sending email for reset link)
-  const handlePasswordReset = async () => {
-    // 1. Basic validation
+  // Sends the reset link to the user's email
+  const handlePasswordReset = async (e) => {
+    e.preventDefault(); // form submit (also works with the Enter key)
 
-    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email);
+    const email = data.email.trim();
+    const isValidEmail = EMAIL_REGEX.test(email);
     setData({
       ...data,
       isValidUser: isValidEmail,
@@ -53,26 +58,17 @@ const ForgotPassword = () => {
     });
 
     if (!isValidEmail) {
-      setSnackbar({
-        open: true,
-        message: t("frorgotPassword_page.enterValidEmail"),
-        severity: "error",
-      });
+      showMessage(t("frorgotPassword_page.enterValidEmail"), "error");
       return;
     }
 
     try {
       setLoading(true);
 
-      // 2. Call API
-      const response = await sendPasswordResetLink(data.email);
+      const response = await sendPasswordResetLink(email);
 
       if (response.success) {
-        setSnackbar({
-          open: true,
-          message: t("frorgotPassword_page.resetLinkSent"),
-          severity: "success",
-        });
+        showMessage(t("frorgotPassword_page.resetLinkSent"), "success");
 
         setData((prev) => ({
           ...prev,
@@ -80,43 +76,47 @@ const ForgotPassword = () => {
           check_email_Change: false,
         }));
 
-        // optional: redirect after delay
+        // back to sign in after the message has been read
         setTimeout(() => {
           navigate("/signin");
         }, 2500);
       } else {
-        setSnackbar({
-          open: true,
-          message: t("frorgotPassword_page.resetFailedLink"),
-          severity: "error",
-        });
+        showMessage(t("frorgotPassword_page.resetFailedLink"), "error");
       }
     } catch (error) {
-      setSnackbar({
-        open: true,
-        message: t("frorgotPassword_page.somethingWrong"),
-        severity: "error",
-      });
+      showMessage(t("frorgotPassword_page.somethingWrong"), "error");
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle Snackbar Close
   const handleClose = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
   return (
     <div className="forgot-password-container">
-      <div className="forgot-password-box">
+      <form
+        className="forgot-password-box"
+        onSubmit={handlePasswordReset}
+        noValidate
+      >
+        <AuthLogo />
+
         <h2>{t("frorgotPassword_page.forgotPasswordTitle")}</h2>
+        <p className="auth-subtitle">
+          {t(
+            "frorgotPassword_page.subtitle",
+            "Enter your email and we will send you a link to reset your password.",
+          )}
+        </p>
 
         <div className="input-container">
           <TextField
             size="small"
             label={t("frorgotPassword_page.email")}
             type="email"
+            autoComplete="email"
             fullWidth
             value={data.email}
             onChange={(e) => handleEmailChange(e.target.value)}
@@ -143,21 +143,18 @@ const ForgotPassword = () => {
           />
         </div>
 
-        {/* Reset Button */}
         <div className="button-group">
-          <button className="button-success" onClick={handlePasswordReset}>
+          <button type="submit" className="button-success">
             {t("frorgotPassword_page.sendResetLink")}
           </button>
         </div>
 
-        {/* Sign In Link */}
         <p className="signin-link">
           {t("frorgotPassword_page.rememberedPassword")}{" "}
           <Link to="/signin">{t("frorgotPassword_page.signIn")}</Link>
         </p>
-      </div>
+      </form>
 
-      {/* Snackbar */}
       <CustomSnackbar {...snackbar} onClose={handleClose} />
       <LoadingSpinner open={loading} />
     </div>

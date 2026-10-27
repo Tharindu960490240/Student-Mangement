@@ -1,20 +1,25 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Lock, Visibility, VisibilityOff, Email } from "@mui/icons-material";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import "../styles/frogotPassword.css";
+import AuthLogo from "../AuthLogo";
 import LoadingSpinner from "./LoadingSpinner";
 import CustomSnackbar from "./CustomSnackbar";
 
-import { resetPassword } from "../../services/authService";
+import { resetPassword, validateResetToken } from "../../services/authService";
 
 import { useTranslation } from "react-i18next";
 
+const PASSWORD_REGEX =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
 const ResetPassword = ({ onSignOut }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
@@ -34,84 +39,71 @@ const ResetPassword = ({ onSignOut }) => {
     severity: "success",
   });
 
-  const navigate = useNavigate();
-  const location = useLocation();
+  const showMessage = (message, severity) =>
+    setSnackbar({ open: true, message, severity });
 
-  const stableOnSignOut = useCallback(() => {
-    if (onSignOut) {
-      onSignOut();
-    }
+  // keep the latest onSignOut without re-running the effect below
+  const signOutRef = useRef(onSignOut);
+  useEffect(() => {
+    signOutRef.current = onSignOut;
   }, [onSignOut]);
 
+  // Read the link when the page opens
   useEffect(() => {
-    const clearLocalStorage = async () => {
-      localStorage.clear();
-      stableOnSignOut();
+    // Anyone opening a reset link is signed out first (the saved theme is kept)
+    localStorage.removeItem("Token");
+    localStorage.removeItem("sessionTimestamp");
+    if (signOutRef.current) signOutRef.current();
+
+    let timer;
+    const failAndRedirect = (message) => {
+      showMessage(message, "error");
+      setLoading(true);
+      timer = setTimeout(() => {
+        setLoading(false);
+        navigate("/forgot-password");
+      }, 2500);
     };
 
-    clearLocalStorage();
+    const token = new URLSearchParams(location.search).get("token");
 
-    const queryParams = new URLSearchParams(location.search);
-    const token = queryParams.get("token");
+    if (!token) {
+      failAndRedirect(t("reset_password_page.missingToken"));
+      return () => clearTimeout(timer);
+    }
 
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        const { email, exp } = decoded;
-
-        // Check if token is expired
-        const currentTime = Date.now() / 1000;
-        if (exp < currentTime) {
-          setSnackbar({
-            open: true,
-            message: t("reset_password_page.tokenExpired"),
-            severity: "error",
-          });
-          setLoading(true);
-          setTimeout(() => {
-            setLoading(false);
-            navigate("/forgot-password");
-          }, 2500);
-          return;
-        }
-
-        // Set email and disable the field
-        setData((prevData) => ({
-          ...prevData,
-          email: email,
+    // The link holds a random one-time code. Ask the server whether it is
+    // still valid and which account it belongs to.
+    let cancelled = false;
+    validateResetToken(token).then((res) => {
+      if (cancelled) return;
+      if (res.success) {
+        setData((prev) => ({
+          ...prev,
+          email: res.data.email,
           isValidUser: true,
           check_email_Change: true,
         }));
-      } catch (error) {
-        setSnackbar({
-          open: true,
-          message: t("reset_password_page.invalidToken"),
-          severity: "error",
-        });
-        setLoading(true);
-        setTimeout(() => {
-          setLoading(false);
-          navigate("/forgot-password");
-        }, 2500);
+      } else {
+        failAndRedirect(res.message || t("reset_password_page.invalidToken"));
       }
-    }
-  }, [location.search, navigate, stableOnSignOut, t]);
+    });
 
-  // Handle New Password Input Change
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [location.search, navigate, t]);
+
   const handleNewPasswordChange = (val) => {
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-    const isPasswordValid = passwordRegex.test(val);
     setData({
       ...data,
       password: val,
-      isPasswordValid: isPasswordValid,
+      isPasswordValid: PASSWORD_REGEX.test(val),
       passwordMatch: val === data.confirmPassword,
     });
   };
 
-  // Handle Confirm Password Input Change
   const handleConfirmPasswordChange = (val) => {
     setData({
       ...data,
@@ -120,65 +112,42 @@ const ResetPassword = ({ onSignOut }) => {
     });
   };
 
-  // Toggle Password Visibility
   const togglePasswordVisibility = () => {
-    setData({
-      ...data,
-      showPassword: !data.showPassword,
-    });
+    setData({ ...data, showPassword: !data.showPassword });
   };
 
-  // Handle Password Reset
-  const handlePasswordReset = async () => {
-    const isPasswordValid =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
-        data.password,
-      );
+  const handlePasswordReset = async (e) => {
+    e.preventDefault(); // form submit (also works with the Enter key)
+
+    const isPasswordValid = PASSWORD_REGEX.test(data.password);
     const matchPassword = data.password === data.confirmPassword;
 
-    // Update the state with validation results
     setData({
       ...data,
-      isPasswordValid: isPasswordValid,
+      isPasswordValid,
       passwordMatch: matchPassword,
     });
 
     if (!isPasswordValid || !matchPassword) {
-      setSnackbar({
-        open: true,
-        message: t("reset_password_page.fillValidFields"),
-        severity: "error",
-      });
+      showMessage(t("reset_password_page.fillValidFields"), "error");
+      return;
+    }
+
+    const token = new URLSearchParams(location.search).get("token");
+
+    if (!token) {
+      showMessage(t("reset_password_page.missingToken"), "error");
       return;
     }
 
     try {
       setLoading(true);
 
-      // 2. Get token from URL
-      const queryParams = new URLSearchParams(location.search);
-      const token = queryParams.get("token");
-
-      if (!token) {
-        setSnackbar({
-          open: true,
-          message: t("reset_password_page.missingToken"),
-          severity: "error",
-        });
-        return;
-      }
-
-      // 3. Call API
       const response = await resetPassword(token, data.password);
 
       if (response.success) {
-        setSnackbar({
-          open: true,
-          message: t("reset_password_page.resetSuccess"),
-          severity: "success",
-        });
+        showMessage(t("reset_password_page.resetSuccess"), "success");
 
-        // clear state
         setData({
           email: "",
           password: "",
@@ -190,39 +159,41 @@ const ResetPassword = ({ onSignOut }) => {
           check_email_Change: false,
         });
 
-        // redirect to login
         setTimeout(() => {
           navigate("/signin");
         }, 2500);
       } else {
-        setSnackbar({
-          open: true,
-          message: t("reset_password_page.resetFailed"),
-          severity: "error",
-        });
+        showMessage(t("reset_password_page.resetFailed"), "error");
       }
     } catch (error) {
-      setSnackbar({
-        open: true,
-        message: t("reset_password_page.somethingWrong"),
-        severity: "error",
-      });
+      showMessage(t("reset_password_page.somethingWrong"), "error");
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle Snackbar Close
   const handleClose = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
   return (
     <div className="forgot-password-container">
-      <div className="forgot-password-box">
-        <h2>{t("reset_password_page.title")}</h2>
+      <form
+        className="forgot-password-box"
+        onSubmit={handlePasswordReset}
+        noValidate
+      >
+        <AuthLogo />
 
-        {/* Email Input */}
+        <h2>{t("reset_password_page.title")}</h2>
+        <p className="auth-subtitle">
+          {t(
+            "reset_password_page.subtitle",
+            "Choose a new password for your account.",
+          )}
+        </p>
+
+        {/* Email (from the reset link, read only) */}
         <div className="input-container">
           <TextField
             size="small"
@@ -235,7 +206,9 @@ const ResetPassword = ({ onSignOut }) => {
             variant="outlined"
             className="custom-textfield"
             error={!data.isValidUser}
-            helperText={!data.isValidUser ? t("reset_password_page.emailError") : ""}
+            helperText={
+              !data.isValidUser ? t("reset_password_page.emailError") : ""
+            }
             required
             InputProps={{
               startAdornment: (
@@ -252,13 +225,14 @@ const ResetPassword = ({ onSignOut }) => {
           />
         </div>
 
-        {/* New Password Input */}
+        {/* New password */}
         <div className="input-container">
           <TextField
             className="custom-textfield"
             size="small"
             label={t("reset_password_page.newPassword")}
             type={data.showPassword ? "text" : "password"}
+            autoComplete="new-password"
             fullWidth
             value={data.password}
             onChange={(e) => handleNewPasswordChange(e.target.value)}
@@ -279,7 +253,12 @@ const ResetPassword = ({ onSignOut }) => {
               ),
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={togglePasswordVisibility}>
+                  <IconButton
+                    onClick={togglePasswordVisibility}
+                    aria-label={
+                      data.showPassword ? "Hide password" : "Show password"
+                    }
+                  >
                     {data.showPassword ? <Visibility /> : <VisibilityOff />}
                   </IconButton>
                 </InputAdornment>
@@ -288,12 +267,13 @@ const ResetPassword = ({ onSignOut }) => {
           />
         </div>
 
-        {/* Confirm Password Input */}
+        {/* Confirm password */}
         <div className="input-container">
           <TextField
             size="small"
             label={t("reset_password_page.confirmPassword")}
             type={data.showPassword ? "text" : "password"}
+            autoComplete="new-password"
             fullWidth
             value={data.confirmPassword}
             onChange={(e) => handleConfirmPasswordChange(e.target.value)}
@@ -301,7 +281,9 @@ const ResetPassword = ({ onSignOut }) => {
             variant="outlined"
             className="custom-textfield"
             error={!data.passwordMatch}
-            helperText={!data.passwordMatch ? t("reset_password_page.passwordMismatch") : ""}
+            helperText={
+              !data.passwordMatch ? t("reset_password_page.passwordMismatch") : ""
+            }
             required
             InputProps={{
               startAdornment: (
@@ -314,19 +296,17 @@ const ResetPassword = ({ onSignOut }) => {
         </div>
 
         <div className="button-group">
-          {/* Reset Button */}
-          <button className="button-success" onClick={handlePasswordReset}>
+          <button type="submit" className="button-success">
             {t("reset_password_page.resetPassword")}
           </button>
         </div>
 
-        {/* Sign In Link */}
         <p className="signin-link">
-          {t("reset_password_page.rememberedPassword")} <Link to="/signin">{t("reset_password_page.signIn")}</Link>
+          {t("reset_password_page.rememberedPassword")}{" "}
+          <Link to="/signin">{t("reset_password_page.signIn")}</Link>
         </p>
-      </div>
+      </form>
 
-      {/* Snackbar */}
       <CustomSnackbar {...snackbar} onClose={handleClose} />
       <LoadingSpinner open={loading} />
     </div>

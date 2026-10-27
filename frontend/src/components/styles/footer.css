@@ -8,7 +8,7 @@
 /* ================= CONTAINER ================= */
 .footer-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1.1fr 1.3fr 1fr;
   gap: 60px;
   padding: 60px 60px;
   max-width: 1200px;
@@ -24,11 +24,42 @@
   font-weight: 800;
 }
 
+.footer-brand {
+  margin-bottom: 14px;
+}
+
 .footer-logo {
-  width: 30px;
-  height: 30px;
+  height: 60px;
+  width: auto;
   object-fit: contain;
-  border-radius: 6px;
+}
+
+/* one logo per theme */
+.footer-logo-dark {
+  display: none;
+}
+
+[data-theme="dark"] .footer-logo-light {
+  display: none;
+}
+
+[data-theme="dark"] .footer-logo-dark {
+  display: block;
+}
+
+/* campus addresses */
+.footer-col a.footer-address {
+  align-items: flex-start;
+  line-height: 1.5;
+}
+
+.footer-address svg {
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.footer-address strong {
+  font-weight: 600;
 }
 
 /* ================= TEXT ================= */

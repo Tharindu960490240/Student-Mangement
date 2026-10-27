@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { CheckCircle, ErrorOutline } from "@mui/icons-material";
+import CircularProgress from "@mui/material/CircularProgress";
 
-import LoadingSpinner from "./LoadingSpinner";
-import CustomSnackbar from "./CustomSnackbar";
-
+import AuthLogo from "../AuthLogo";
 import { verifyEmail } from "../../services/authService";
-import { ROUTES } from "../../const/const";
 
 import "../styles/verifyAccount.css";
 
@@ -16,68 +15,86 @@ const VerifyAccount = () => {
   const { token } = useParams();
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(true);
+  // "verifying" | "success" | "error"
+  const [status, setStatus] = useState("verifying");
 
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: "",
-    severity: "success",
-  });
-
-  const handleClose = () => {
-    setSnackbar((prev) => ({ ...prev, open: false }));
-  };
+  // React StrictMode runs effects twice in development. The link must only
+  // be used once, otherwise the second call fails and shows a false error.
+  const hasVerified = useRef(false);
 
   useEffect(() => {
-    const verifyUser = async () => {
-      setLoading(true);
+    if (hasVerified.current) return;
+    hasVerified.current = true;
 
+    const verifyUser = async () => {
       try {
         const result = await verifyEmail(token);
-
-        if (result.success) {
-          setSnackbar({
-            open: true,
-            message: t("verify_account_page.verifySuccess"),
-            severity: "success",
-          });
-        } else {
-          setSnackbar({
-            open: true,
-            message: t("verify_account_page.verifyFailed"),
-            severity: "error",
-          });
-        }
+        setStatus(result.success ? "success" : "error");
       } catch (err) {
-        setSnackbar({
-          open: true,
-          message: t("verify_account_page.verifyError"),
-          severity: "error",
-        });
-      } finally {
-        setLoading(false);
-
-        setTimeout(() => {
-          navigate(ROUTES.HOME);
-        }, 2500);
+        setStatus("error");
       }
     };
 
     verifyUser();
-  }, [token, navigate, t]);
+  }, [token]);
+
+  // After a successful verification, continue to sign in
+  useEffect(() => {
+    if (status !== "success") return;
+
+    const timer = setTimeout(() => {
+      navigate("/signin", { replace: true });
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [status, navigate]);
 
   return (
     <div className="verify-container">
       <div className="verify-box">
-        <h2 className="verify-title">{t("verify_account_page.verifyingAccount")}</h2>
+        <AuthLogo />
 
-        <p className="verify-subtext">{t("verify_account_page.verifySubtext")}</p>
+        {status === "verifying" && (
+          <>
+            <CircularProgress size={40} thickness={4} />
+            <h2 className="verify-title">
+              {t("verify_account_page.verifyingAccount")}
+            </h2>
+            <p className="verify-subtext">
+              {t("verify_account_page.verifySubtext")}
+            </p>
+          </>
+        )}
 
-        {/* Spinner */}
-        <LoadingSpinner open={loading} />
+        {status === "success" && (
+          <>
+            <CheckCircle className="verify-icon verify-icon-success" />
+            <h2 className="verify-title">
+              {t("verify_account_page.successTitle", "Email verified")}
+            </h2>
+            <p className="verify-subtext">
+              {t("verify_account_page.verifySuccess")}
+            </p>
+            <Link to="/signin" className="button-success verify-button">
+              {t("verify_account_page.goToSignIn", "Go to sign in")}
+            </Link>
+          </>
+        )}
 
-        {/* Snackbar */}
-        <CustomSnackbar {...snackbar} onClose={handleClose} />
+        {status === "error" && (
+          <>
+            <ErrorOutline className="verify-icon verify-icon-error" />
+            <h2 className="verify-title">
+              {t("verify_account_page.errorTitle", "Verification failed")}
+            </h2>
+            <p className="verify-subtext">
+              {t("verify_account_page.verifyFailed")}
+            </p>
+            <Link to="/signin" className="button-success verify-button">
+              {t("verify_account_page.goToSignIn", "Go to sign in")}
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );

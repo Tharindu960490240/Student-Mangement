@@ -25,7 +25,7 @@
 .header-left {
   display: flex;
   align-items: center;
-  cursor: pointer;
+  gap: 8px;
   flex: 0 0 auto;
 }
 
@@ -33,6 +33,7 @@
   height: 42px;
   width: auto;
   object-fit: contain;
+  cursor: pointer;
 }
 
 /* ================= CENTER NAV ================= */
@@ -65,7 +66,7 @@
 
 /* highlight button */
 .nav-item.highlight {
-  background: rgba(33, 150, 243, 0.12);
+  background: rgba(40, 44, 125, 0.12);
   padding: 6px 12px;
   border-radius: 20px;
   color: var(--dropdown-hover-text);
@@ -102,8 +103,8 @@
 }
 
 .header-right .primary {
-  background: var(--link-color);
-  color: white;
+  background: var(--button-success-bg);
+  color: #ffffff;
 }
 
 /* ================= PROFILE ================= */
@@ -124,6 +125,47 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* ================= THEME BUTTON ================= */
+.header-right .theme-icon-btn {
+  padding: 8px;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.header-right .theme-icon-btn:hover {
+  background: var(--side-nav-hover-bg);
+}
+
+.header-right .theme-icon-btn svg {
+  font-size: 22px;
+}
+
+/* ================= AVATAR ================= */
+.MuiAvatar-root.profile-avatar {
+  width: 34px;
+  height: 34px;
+  font-size: 15px;
+  background: var(--brand-navy);
+  color: #ffffff;
+}
+
+/* ================= DROPDOWN USER INFO ================= */
+.dropdown-user {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-color);
+  cursor: default;
+}
+
+.dropdown-user strong {
+  display: block;
+  font-size: 14px;
+}
+
+.dropdown-user span {
+  font-size: 12px;
+  color: var(--muted-color);
 }
 
 /* ================= NOTIFICATION ================= */
@@ -172,9 +214,22 @@
 }
 
 /* ================= MOBILE MENU ICON ================= */
-.mobile-menu-icon {
+.header-left .mobile-menu-icon {
   display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-color);
   cursor: pointer;
+}
+
+.header-left .mobile-menu-icon:hover {
+  background: var(--side-nav-hover-bg);
 }
 
 /* ================= MOBILE DRAWER ================= */
@@ -300,9 +355,12 @@
     padding: 0 16px;
   }
 
-  .mobile-menu-icon {
+  .header-left .mobile-menu-icon {
     display: flex;
-    align-items: center;
+  }
+
+  .header-left {
+    margin-left: -8px;
   }
 
   .header-right button span {

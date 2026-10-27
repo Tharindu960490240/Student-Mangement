@@ -4,14 +4,11 @@
 
 .verify-container {
   width: 100%;
-  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 15px;
-  padding: 120px 16px;
+  padding: 40px 16px;
 
-  background: var(--bg-color);
   color: var(--text-color);
 
   box-sizing: border-box;
@@ -45,7 +42,31 @@
 .verify-title {
   font-size: 22px;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin: 0 0 10px;
+}
+
+.verify-box .MuiCircularProgress-root {
+  margin-bottom: 16px;
+}
+
+.verify-icon {
+  font-size: 56px !important;
+  margin-bottom: 8px;
+}
+
+.verify-icon-success {
+  color: #2e7d32 !important;
+}
+
+.verify-icon-error {
+  color: #ed1f24 !important;
+}
+
+.verify-button {
+  display: block;
+  box-sizing: border-box;
+  text-align: center;
+  text-decoration: none;
 }
 
 .verify-subtext {

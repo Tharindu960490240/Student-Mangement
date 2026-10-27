@@ -3,8 +3,10 @@
 =============================== */
 
 :root {
-  --link-color: #2196f3;
-  --link-hover-color: #1769aa;
+  --link-color: #282c7d; /* AFC navy */
+  --link-hover-color: #1a1d5c;
+  --brand-navy: #282c7d;
+  --brand-red: #ed1f24;
 
   /* Light theme */
   --bg-color: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
@@ -13,22 +15,22 @@
   --text-color: #1a202c;
   --muted-color: rgba(26, 32, 44, 0.7);
   --border-color: rgba(0, 0, 0, 0.06);
-  --hero-background-color: linear-gradient(135deg, #2196f3 0%, #64b5f6 100%);
+  --hero-background-color: linear-gradient(135deg, #282c7d 0%, #4349b5 100%);
 
   --side-nav-bg: #ffffff;
   --side-nav-text: #1a202c;
-  --side-nav-hover-bg: #e3f2fd;
-  --side-nav-active-bg: #bbdefb;
-  --side-nav-active-text: #0d47a1;
+  --side-nav-hover-bg: #f0f1fa;
+  --side-nav-active-bg: #e4e6f7;
+  --side-nav-active-text: #282c7d;
   --side-nav-box-shadow: rgba(0, 0, 0, 0.08);
 
   --header-bg: #ffffff;
   --header-text: #1a202c;
   --dropdown-bg: #ffffff;
   --dropdown-text: #2d3748;
-  --dropdown-hover-bg: #e3f2fd;
-  --dropdown-hover-text: #2196f3;
-  --dropdown-border: #e3f2fd;
+  --dropdown-hover-bg: #f0f1fa;
+  --dropdown-hover-text: #282c7d;
+  --dropdown-border: #e4e6f7;
   --header-box-shadow: rgba(0, 0, 0, 0.08);
   --dropdown-box-shadow: rgba(0, 0, 0, 0.15);
 
@@ -39,9 +41,9 @@
   /* ===============================
      Unified Buttons (ALL THEMES)
   =============================== */
-  --button-success-bg: linear-gradient(135deg, #2196f3 0%, #4dabf5 100%);
+  --button-success-bg: linear-gradient(135deg, #282c7d 0%, #4349b5 100%);
   --button-text: #ffffff;
-  --button-error-bg: linear-gradient(135deg, #e91e63 0%, #ed4b82 100%);
+  --button-error-bg: linear-gradient(135deg, #ed1f24 0%, #f4575b 100%);
   --button-warning-bg: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
   --button-disable-bg: linear-gradient(135deg, #bdbdbd 0%, #e0e0e0 100%);
 }
@@ -51,6 +53,9 @@
 =============================== */
 
 [data-theme="dark"] {
+  --link-color: #9aa0ff;
+  --link-hover-color: #c3c6ff;
+
   --bg-color: linear-gradient(180deg, #0f172a 0%, #020617 100%);
   --main-bg-color: #020617;
   --card-color: #111827;
@@ -63,14 +68,14 @@
   --side-nav-text: #e5e7eb;
   --side-nav-hover-bg: rgba(255, 255, 255, 0.08);
   --side-nav-active-bg: #2d3748;
-  --side-nav-active-text: #4aedc4;
+  --side-nav-active-text: #9aa0ff;
 
   --header-bg: #111418;
   --header-text: #ffffff;
   --dropdown-bg: #1c1f26;
   --dropdown-text: #f5f5f5;
   --dropdown-hover-bg: #2d3748;
-  --dropdown-hover-text: #4aedc4;
+  --dropdown-hover-text: #9aa0ff;
   --dropdown-border: #2f2f3a;
   --header-box-shadow: rgba(0, 0, 0, 0.5);
   --dropdown-box-shadow: rgba(0, 0, 0, 0.5);
@@ -80,9 +85,9 @@
   --footer-box-shadow: rgba(0, 0, 0, 0.5);
 
   /* Buttons remain SAME in dark mode */
-  --button-success-bg: linear-gradient(135deg, #2196f3 0%, #4dabf5 100%);
+  --button-success-bg: linear-gradient(135deg, #282c7d 0%, #4349b5 100%);
   --button-text: #ffffff;
-  --button-error-bg: linear-gradient(135deg, #e91e63 0%, #ed4b82 100%);
+  --button-error-bg: linear-gradient(135deg, #ed1f24 0%, #f4575b 100%);
   --button-warning-bg: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
   --button-disable-bg: linear-gradient(135deg, #bdbdbd 0%, #e0e0e0 100%);
 }
